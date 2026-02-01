@@ -160,12 +160,13 @@ public class MyArray<E> implements IMyArray<E> {
         if (other == null) return false;
         if (index < 0 || index > size) return false;
         if (other.size == 0) return true;
-        while (size + other.size() > array.length) {
+        int otherSize = other.size();
+        while (size + otherSize > array.length) {
             allocateArray();
         }
-        System.arraycopy(array, index, array, index + other.size(), size - index); // освобождаем место
-        System.arraycopy(other.array, 0, array, index, other.size()); // вставляем элементы
-        size += other.size();
+        System.arraycopy(array, index, array, index + otherSize, size - index); // освобождаем место
+        System.arraycopy(other.array, 0, array, index, otherSize); // вставляем элементы
+        size += otherSize;
         return true;
     }
 
