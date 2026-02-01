@@ -7,7 +7,7 @@ public class MyArray<E> implements IMyArray<E> {
 
     public MyArray(int CAPACITY) {
         if (CAPACITY <= 16) { // Запрет на создание массива меньше, чтобы избежать 0 и отрицательных значений
-            array = new Object[MyArray.CAPACITY];
+            array = new Object[16];
             return;
         }
         array = new Object[CAPACITY];
@@ -160,9 +160,12 @@ public class MyArray<E> implements IMyArray<E> {
         if (other == null) return false;
         if (index < 0 || index > size) return false;
         if (other.size == 0) return true;
-        for (E obj : (E[]) other.toArray()) {
-            add(index++, obj);
+        while (size + other.size() > array.length) {
+            allocateArray();
         }
+        System.arraycopy(array, index, array, index + other.size(), size - index); // освобождаем место
+        System.arraycopy(other.array, 0, array, index, other.size()); // вставляем элементы
+        size += other.size();
         return true;
     }
 
@@ -177,5 +180,4 @@ public class MyArray<E> implements IMyArray<E> {
         }
         return true;
     }
-
 }
