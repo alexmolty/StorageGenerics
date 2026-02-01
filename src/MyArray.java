@@ -6,10 +6,6 @@ public class MyArray<E> implements IMyArray<E> {
     private int size = 0;
 
     public MyArray(int CAPACITY) {
-        if (CAPACITY <= 16) { // Запрет на создание массива меньше, чтобы избежать 0 и отрицательных значений
-            array = new Object[16];
-            return;
-        }
         array = new Object[CAPACITY];
     }
 
@@ -32,7 +28,7 @@ public class MyArray<E> implements IMyArray<E> {
     }
 
     private void allocateArray() {
-        array = Arrays.copyOf(array, array.length * 2);
+        array = Arrays.copyOf(array, (array.length +2) * 2);
     }
 
     @Override
@@ -54,7 +50,9 @@ public class MyArray<E> implements IMyArray<E> {
 
     @Override
     public boolean set(int index, E obj) {
-        if (index < 0 || index >= size) return false;
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
         array[index] = obj;
         return true;
     }
@@ -62,7 +60,9 @@ public class MyArray<E> implements IMyArray<E> {
     @SuppressWarnings("unchecked")
     @Override
     public E get(int index) {
-        if (index < 0 || index >= size) return null;
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
         return (E) array[index];
     }
 
@@ -103,7 +103,7 @@ public class MyArray<E> implements IMyArray<E> {
     @Override
     public E remove(int index) {
         if (index < 0 || index >= size) {
-            return null;
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
         E res = (E) array[index];
         if (index < size - 1) {
@@ -158,7 +158,9 @@ public class MyArray<E> implements IMyArray<E> {
     public boolean addAll(int index, MyArray<E> other) {
         // вставляем другой массив по индексу
         if (other == null) return false;
-        if (index < 0 || index > size) return false;
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
         if (other.size == 0) return true;
         int otherSize = other.size();
         while (size + otherSize > array.length) {
