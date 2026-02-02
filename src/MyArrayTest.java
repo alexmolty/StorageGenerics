@@ -190,6 +190,13 @@ class MyArrayTest {
         assertArrayEquals(new Object[]{1, 4, 5}, myArrayInt.toArray());
     }
     @Test
+    void addAllThis() {
+        myArrayInt.addAll(1, 2, 3);
+        myArrayInt.addAll(myArrayInt);
+        assertArrayEquals(new Object[]{1, 2, 3, 1, 2, 3}, myArrayInt.toArray());
+    }
+
+    @Test
     void allocate() {
         //TODO
 //        assertEquals(16, myArrayInt.getCapacity());
@@ -200,5 +207,26 @@ class MyArrayTest {
 //        myArrayInt.add(999);           // тут должен произойти рост
 //        assertEquals(32, myArrayInt.getCapacity());
 //        assertEquals(17, myArrayInt.size());
+    }
+
+    @Test
+    public void addAllSelfShouldDuplicateContentAtEnd() {
+        // исходное содержимое
+        Object[] before = myArrayInt.toArray();
+        int originalSize = myArrayInt.size();
+
+        // действие: добавляем numbers в numbers
+        myArrayInt.addAll(myArrayInt);
+
+        // размер должен удвоиться
+        assertEquals(originalSize * 2, myArrayInt.size());
+
+        // проверяем содержимое: [before, before]
+        Object[] after = myArrayInt.toArray();
+        Object[] expected = new Object[originalSize * 2];
+        System.arraycopy(before, 0, expected, 0, originalSize);
+        System.arraycopy(before, 0, expected, originalSize, originalSize);
+
+        assertArrayEquals(expected, after);
     }
 }

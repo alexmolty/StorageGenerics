@@ -6,6 +6,7 @@ public class MyArray<E> implements IMyArray<E> {
     private int size = 0;
 
     public MyArray(int CAPACITY) {
+        if (CAPACITY < 0) throw new IllegalArgumentException("Capacity must be >= 0");
         array = new Object[CAPACITY];
     }
 
@@ -116,7 +117,7 @@ public class MyArray<E> implements IMyArray<E> {
     @Override
     public boolean remove(E obj) {
         int index = indexOf(obj);
-        if (index < 0) return false;
+        if (index == -1) return false;
         remove(index);
         return true;
     }
