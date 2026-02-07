@@ -1,6 +1,10 @@
-import java.util.Arrays;
+package MyArray;
 
-public class MyArray<E> implements IMyArray<E> {
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.function.Predicate;
+
+public class MyArray<E> implements IMyArray<E>, Iterable<E> {
     private static final int CAPACITY = 16;
     private Object[] array;
     private int size = 0;
@@ -20,7 +24,6 @@ public class MyArray<E> implements IMyArray<E> {
 
     @Override
     public boolean add(E obj) {
-        if (obj == null) return false;
         if (size == array.length) {
             allocateArray();
         }
@@ -29,7 +32,7 @@ public class MyArray<E> implements IMyArray<E> {
     }
 
     private void allocateArray() {
-        array = Arrays.copyOf(array, (array.length +2) * 2);
+        array = Arrays.copyOf(array, (array.length + 2) * 2);
     }
 
     @Override
@@ -52,7 +55,7 @@ public class MyArray<E> implements IMyArray<E> {
     @Override
     public boolean set(int index, E obj) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds of size: " + size);
         }
         array[index] = obj;
         return true;
@@ -62,7 +65,7 @@ public class MyArray<E> implements IMyArray<E> {
     @Override
     public E get(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds of size: " + size);
         }
         return (E) array[index];
     }
@@ -104,7 +107,7 @@ public class MyArray<E> implements IMyArray<E> {
     @Override
     public E remove(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds of size: " + size);
         }
         E res = (E) array[index];
         if (index < size - 1) {
@@ -160,7 +163,7 @@ public class MyArray<E> implements IMyArray<E> {
         // вставляем другой массив по индексу
         if (other == null) return false;
         if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds of size: " + size);
         }
         if (other.size == 0) return true;
         int otherSize = other.size();
@@ -184,4 +187,52 @@ public class MyArray<E> implements IMyArray<E> {
         }
         return true;
     }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new MyArrayIterator();
+    }
+
+    private class MyArrayIterator implements Iterator<E> {
+        private int index = 0;
+
+        @Override
+        public boolean hasNext() {
+            return index < size;
+        }
+
+        @Override
+        public E next() {
+            return get(index++);
+        }
+    }
+
+    public boolean removeIf(Predicate<E> predicate) {
+        boolean arrayUpdated = false;
+        for (int i = 0; i < size; i++) {
+            if (predicate.test(get(i))) {
+                remove(i);
+                i--;
+                arrayUpdated = true;
+            }
+        }
+        return arrayUpdated;
+    }
+
+    public int indexOf(Predicate<E> predicate)
+    {
+        for (int i = 0; i < size; i++) {
+            if (predicate.test(get(i))) return i;
+        }
+        return -1;
+    }
+
+    public int lastIndexOf(Predicate<E> predicate)
+    {
+        for (int i = size-1; i >= 0; i--) {
+            if (predicate.test(get(i))) return i;
+        }
+        return -1;
+    }
+
 }

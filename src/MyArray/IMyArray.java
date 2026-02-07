@@ -1,3 +1,5 @@
+package MyArray;
+
 public interface IMyArray<E> {
     boolean add(E obj);
     boolean add(int index, E obj);

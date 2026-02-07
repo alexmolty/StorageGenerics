@@ -1,9 +1,13 @@
+package MyArray.Tests;
+
+import MyArray.MyArray;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MyArrayTest {
-    MyArray<Integer> myArrayInt = new MyArray<>();
-    MyArray<String> myArrayString = new MyArray<>();
+    MyArray<Integer> myArrayInt = new MyArray<Integer>();
+    MyArray<String> myArrayString = new MyArray<String>();
 
     @Test
     void add() {
@@ -19,13 +23,15 @@ class MyArrayTest {
     }
 
     @Test
-    void addNullIgnore() {
+    void addNull() {
         myArrayInt.add(5);
         myArrayInt.add(null);
         myArrayInt.add(10);
         assertEquals(5, myArrayInt.get(0));
-        assertEquals(10, myArrayInt.get(1));
+        assertNull(myArrayInt.get(1));
+        assertEquals(10, myArrayInt.get(2));
     }
+
     @Test
     void addByIndex() {
         myArrayInt.addAll(1, 2, 3);
@@ -44,6 +50,7 @@ class MyArrayTest {
         assertFalse(myArrayInt.add(-1, 5));
         assertFalse(myArrayInt.add(myArrayInt.size() + 1, 5));
     }
+
     @Test
     void set() {
         myArrayInt.add(5);
@@ -69,11 +76,12 @@ class MyArrayTest {
         myArrayInt.add(10);
         myArrayInt.add(15);
         myArrayInt.set(1, null);
-        assertEquals(1, myArrayInt.indexOf(null));
+        assertEquals(1, myArrayInt.indexOf((Integer)null));
         myArrayInt.remove(null);
         assertEquals(2, myArrayInt.size());
         assertEquals(15, myArrayInt.get(1));
     }
+
     @Test
     void removeByIndex() {
         myArrayInt.addAll(1, 2, 3);
@@ -87,11 +95,13 @@ class MyArrayTest {
         assertTrue(myArrayInt.remove(Integer.valueOf(1)));  // удалил объект 1
         assertArrayEquals(new Object[]{2, 3}, myArrayInt.toArray());
     }
-// Uncomment this test - there should be an error: incompatible types
+
+    /// / Uncomment this test - there should be an error: incompatible types
 //    @Test
 //    void addStringToArrayInt(){
 //        myArrayInt.add("String");
 //    }
+
     @Test
     void indexOf() {
         myArrayInt.add(12);
@@ -102,8 +112,9 @@ class MyArrayTest {
         assertEquals(3, myArrayInt.indexOf(34));
         assertEquals(0, myArrayInt.indexOf(12));
         assertEquals(-1, myArrayInt.indexOf(100));
-        assertEquals(-1, myArrayInt.indexOf(null));
+        assertEquals(-1, myArrayInt.indexOf((Integer) null));
     }
+
     @Test
     void lastIndexOf() {
         myArrayInt.addAll(1, 2, 3, 2, 1);
@@ -112,6 +123,7 @@ class MyArrayTest {
         assertEquals(2, myArrayInt.lastIndexOf(3));
         assertEquals(-1, myArrayInt.lastIndexOf(99));
     }
+
     @Test
     void contains() {
         myArrayInt.add(12);
@@ -125,7 +137,7 @@ class MyArrayTest {
     void addAllnewMyArray() {
         myArrayInt.add(12);
         myArrayInt.add(23);
-        MyArray<Integer> myArrayInt2 = new MyArray<>();
+        MyArray<Integer> myArrayInt2 = new MyArray<Integer>();
         myArrayInt2.add(34);
         myArrayInt2.add(45);
         myArrayInt.addAll(myArrayInt2);
@@ -151,7 +163,7 @@ class MyArrayTest {
     @Test
     void addAllByIndex() {
         myArrayInt.addAll(0, 1, 2, 3, 4, 5);
-        MyArray<Integer> myArrayInt2 = new MyArray<>();
+        MyArray<Integer> myArrayInt2 = new MyArray<Integer>();
         myArrayInt2.addAll(999, 999, 999);
         myArrayInt.addAll(2, myArrayInt2);
         assertArrayEquals(new Object[]{0, 1, 999, 999, 999, 2, 3, 4, 5}, myArrayInt.toArray());
@@ -162,13 +174,13 @@ class MyArrayTest {
         myArrayInt.addAll(1, 2, 3);
 
         // вставка в начало
-        MyArray<Integer> front = new MyArray<>();
+        MyArray<Integer> front = new MyArray<Integer>();
         front.addAll(10, 20);
         assertTrue(myArrayInt.addAll(0, front));
         assertArrayEquals(new Object[]{10, 20, 1, 2, 3}, myArrayInt.toArray());
 
         // вставка в конец
-        MyArray<Integer> tail = new MyArray<>();
+        MyArray<Integer> tail = new MyArray<Integer>();
         tail.addAll(30, 40);
         assertTrue(myArrayInt.addAll(myArrayInt.size(), tail));
         assertArrayEquals(new Object[]{10, 20, 1, 2, 3, 30, 40}, myArrayInt.toArray());
@@ -184,11 +196,12 @@ class MyArrayTest {
     @Test
     void removeAll() {
         myArrayInt.addAll(1, 2, 3, 4, 5);
-        MyArray<Integer> myArrayInt2 = new MyArray<>();
+        MyArray<Integer> myArrayInt2 = new MyArray<Integer>();
         myArrayInt2.addAll(2, 3, 8);
         assertTrue(myArrayInt.removeAll(myArrayInt2));
         assertArrayEquals(new Object[]{1, 4, 5}, myArrayInt.toArray());
     }
+
     @Test
     void addAllThis() {
         myArrayInt.addAll(1, 2, 3);
@@ -198,15 +211,14 @@ class MyArrayTest {
 
     @Test
     void allocate() {
-        //TODO
-//        assertEquals(16, myArrayInt.getCapacity());
-//        for (int i = 0; i < 16; i++) {
-//            myArrayInt.add(i);
-//        }
-//        assertEquals(16, myArrayInt.getCapacity());
-//        myArrayInt.add(999);           // тут должен произойти рост
-//        assertEquals(32, myArrayInt.getCapacity());
-//        assertEquals(17, myArrayInt.size());
+        assertEquals(16, myArrayInt.getCapacity());
+        for (int i = 0; i < 16; i++) {
+            myArrayInt.add(i);
+        }
+        assertEquals(16, myArrayInt.getCapacity());
+        myArrayInt.add(999);
+        assertEquals(36, myArrayInt.getCapacity());
+        assertEquals(17, myArrayInt.size());
     }
 
     @Test
@@ -228,5 +240,20 @@ class MyArrayTest {
         System.arraycopy(before, 0, expected, originalSize, originalSize);
 
         assertArrayEquals(expected, after);
+    }
+
+    @Test
+    public void zeroCapacityGrowth() {
+        MyArray<Integer> myArrayInt = new MyArray<Integer>(0);
+        assertEquals(0, myArrayInt.getCapacity());
+        myArrayInt.add(1);
+        assertEquals(1, myArrayInt.get(0));
+        assertEquals(1, myArrayInt.size());
+        assertEquals(4, myArrayInt.getCapacity());
+    }
+    @Test
+    public void negativeCapacityError() {
+        assertThrows(IllegalArgumentException.class, () -> new MyArray<>(-1));
+        assertThrows(IllegalArgumentException.class, () -> new MyArray<>(Integer.MIN_VALUE));
     }
 }
